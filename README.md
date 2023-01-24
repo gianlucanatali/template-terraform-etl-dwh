@@ -20,12 +20,22 @@ git clone <repo name> && cd <repo name>
 
 Next, you should create a secrets file to store you keys and secrets. 
 ```bash
+cat <<EOF > terraform/terraform.tfvars
+confluent_cloud_api_key="<replace>"
+confluent_cloud_api_secret="<replace>" 
+aws_region="us-east-2"
+aws_profile="<replace>"
+EOF
+```
+
+Modify the `terraform.tfvars` file and add your secrets into it (replacing `<replace>`). Terraform will automatically use these as variables.
+
+
+Next, ONLY if you are not using gimme-creds, create a secrets file to store you AWS keys and secrets. 
+```bash
 cat <<EOF > env.sh
-export CONFLUENT_CLOUD_API_KEY="<replace>"
-export CONFLUENT_CLOUD_API_SECRET="<replace>" 
-export AWS_ACCESS_KEY_ID="<replace>"
-export AWS_SECRET_ACCESS_KEY="<replace>"
-export AWS_DEFAULT_REGION="us-east-2"
+aws_access_key="<replace>"
+aws_secret_key="<replace>"
 EOF
 ```
 
