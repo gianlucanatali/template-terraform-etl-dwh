@@ -31,7 +31,7 @@ resource "confluent_kafka_cluster" "basic" {
     display_name = "realtime-dwh-cluster"
     availability = "SINGLE_ZONE"
     cloud = "AWS"
-    region = "${local.aws_region}"
+    region = "${var.aws_region}"
     basic {}
     environment {
         id = confluent_environment.env.id

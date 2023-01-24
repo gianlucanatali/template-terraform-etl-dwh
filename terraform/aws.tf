@@ -54,7 +54,7 @@ resource "aws_route_table_association" "subnet_associations" {
 # ------------------------------------------------------
 resource "aws_security_group" "postgres_sg" {
     name = "postgres_security_group_${random_id.vpc_display_id.hex}"
-    description = "${local.aws_description}"
+    description = "${var.aws_description}"
     vpc_id = aws_vpc.main.id
     egress {
         description = "Allow all outbound."
@@ -85,7 +85,7 @@ resource "aws_security_group" "postgres_sg" {
 # CUSTOMERS ID AND CLOUDINIT
 # ------------------------------------------------------
 resource "random_id" "customers_id" {
-    count = local.num_postgres_instances
+    count = var.num_postgres_instances
     byte_length = 4
 }
 data "template_cloudinit_config" "pg_bootstrap_customers" {
@@ -99,9 +99,9 @@ data "template_cloudinit_config" "pg_bootstrap_customers" {
 # CUSTOMERS INSTANCE
 # ------------------------------------------------------
 resource "aws_instance" "postgres_customers" {
-    count = local.num_postgres_instances
+    count = var.num_postgres_instances
     ami = "ami-0c7478fd229861c57"
-    instance_type = local.postgres_instance_shape
+    instance_type = var.postgres_instance_shape
     subnet_id = aws_subnet.public_subnets[0].id
     vpc_security_group_ids = ["${aws_security_group.postgres_sg.id}"]
     user_data = "${data.template_cloudinit_config.pg_bootstrap_customers.rendered}"
@@ -113,7 +113,7 @@ resource "aws_instance" "postgres_customers" {
 # CUSTOMERS EIP
 # ------------------------------------------------------
 resource "aws_eip" "postgres_customers_eip" {
-    count = local.num_postgres_instances
+    count = var.num_postgres_instances
     vpc = true
     instance = aws_instance.postgres_customers[count.index].id
     tags = {
@@ -124,7 +124,7 @@ resource "aws_eip" "postgres_customers_eip" {
 # PRODUCTS ID AND CLOUDINIT
 # ------------------------------------------------------
 resource "random_id" "products_id" {
-    count = local.num_postgres_instances
+    count = var.num_postgres_instances
     byte_length = 4
 }
 data "template_cloudinit_config" "pg_bootstrap_products" {
@@ -138,9 +138,9 @@ data "template_cloudinit_config" "pg_bootstrap_products" {
 # PRODUCTS INSTANCE
 # ------------------------------------------------------
 resource "aws_instance" "postgres_products" {
-    count = local.num_postgres_instances
+    count = var.num_postgres_instances
     ami = "ami-0c7478fd229861c57"
-    instance_type = local.postgres_instance_shape
+    instance_type = var.postgres_instance_shape
     subnet_id = aws_subnet.public_subnets[1].id
     vpc_security_group_ids = ["${aws_security_group.postgres_sg.id}"]
     user_data = "${data.template_cloudinit_config.pg_bootstrap_products.rendered}"
@@ -152,7 +152,7 @@ resource "aws_instance" "postgres_products" {
 # PRODUCTS EIP
 # ------------------------------------------------------
 resource "aws_eip" "postgres_products_eip" {
-    count = local.num_postgres_instances
+    count = var.num_postgres_instances
     vpc = true
     instance = aws_instance.postgres_products[count.index].id
     tags = {
