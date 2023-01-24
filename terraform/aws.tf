@@ -95,13 +95,6 @@ resource "random_id" "customers_id" {
     count = var.num_postgres_instances
     byte_length = 4
 }
-data "template_cloudinit_config" "pg_bootstrap_customers" {
-    base64_encode = true
-    part {
-        content_type = "text/x-shellscript"
-        content = "${file("scripts/pg_customers_bootstrap.sh")}"
-    }
-}
 # ------------------------------------------------------
 # CUSTOMERS INSTANCE
 # ------------------------------------------------------
@@ -111,7 +104,9 @@ resource "aws_instance" "postgres_customers" {
     instance_type = var.postgres_instance_shape
     subnet_id = aws_subnet.public_subnets[0].id
     vpc_security_group_ids = ["${aws_security_group.postgres_sg.id}"]
-    user_data = "${data.template_cloudinit_config.pg_bootstrap_customers.rendered}"
+    user_data = templatefile("${path.module}/scripts/pg_customers_bootstrap.sh", {
+        #environment = var.env
+    })
     tags = {
         Name = "realtime-dwh-postgres-customers-instance-${random_id.customers_id[count.index].hex}"
     }
@@ -134,13 +129,6 @@ resource "random_id" "products_id" {
     count = var.num_postgres_instances
     byte_length = 4
 }
-data "template_cloudinit_config" "pg_bootstrap_products" {
-    base64_encode = true
-    part {
-        content_type = "text/x-shellscript"
-        content = "${file("scripts/pg_products_bootstrap.sh")}"
-    }
-}
 # ------------------------------------------------------
 # PRODUCTS INSTANCE
 # ------------------------------------------------------
@@ -150,7 +138,9 @@ resource "aws_instance" "postgres_products" {
     instance_type = var.postgres_instance_shape
     subnet_id = aws_subnet.public_subnets[1].id
     vpc_security_group_ids = ["${aws_security_group.postgres_sg.id}"]
-    user_data = "${data.template_cloudinit_config.pg_bootstrap_products.rendered}"
+    user_data = templatefile("${path.module}/scripts/pg_products_bootstrap.sh", {
+        #environment = var.env
+    })
     tags = {
         Name = "realtime-dwh-postgres-products-instance-${random_id.products_id[count.index].hex}"
     }
