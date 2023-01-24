@@ -1,3 +1,10 @@
+provider "aws" {
+  region     = var.aws_region
+  #access_key = var.access_key # gimme-aws-creds doesnt require this
+  #secret_key = var.secret_key # gimme-aws-creds doesnt require this
+  profile    = var.aws_profile
+}
+
 resource "random_id" "vpc_display_id" {
     byte_length = 4
 }
