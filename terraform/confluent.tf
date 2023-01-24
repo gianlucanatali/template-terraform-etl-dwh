@@ -42,15 +42,15 @@ resource "confluent_kafka_cluster" "basic" {
 # ------------------------------------------------------
 resource "confluent_service_account" "app_manager" {
     display_name = "app-manager-sa-${random_id.env_display_id.hex}"
-    description = "${local.confluent_description}"
+    description = "${var.confluent_description}"
 }
 resource "confluent_service_account" "ksql" {
     display_name = "ksql-${random_id.env_display_id.hex}"
-    description = "${local.confluent_description}"
+    description = "${var.confluent_description}"
 }
 resource "confluent_service_account" "connectors" {
     display_name = "connector-sa-${random_id.env_display_id.hex}"
-    description = "${local.confluent_description}"
+    description = "${var.confluent_description}"
 }
 # ------------------------------------------------------
 # ROLE BINDINGS
@@ -129,7 +129,7 @@ resource "confluent_kafka_acl" "connectors_source_acl_write" {
 # ------------------------------------------------------
 resource "confluent_api_key" "app_manager_keys" {
     display_name = "app-manager-api-key-${random_id.env_display_id.hex}"
-    description = "${local.confluent_description}"
+    description = "${var.confluent_description}"
     owner {
         id = confluent_service_account.app_manager.id 
         api_version = confluent_service_account.app_manager.api_version
@@ -149,7 +149,7 @@ resource "confluent_api_key" "app_manager_keys" {
 }
 resource "confluent_api_key" "ksql_keys" {
     display_name = "ksql-api-key-${random_id.env_display_id.hex}"
-    description = "${local.confluent_description}"
+    description = "${var.confluent_description}"
     owner {
         id = confluent_service_account.ksql.id 
         api_version = confluent_service_account.ksql.api_version
@@ -170,7 +170,7 @@ resource "confluent_api_key" "ksql_keys" {
 }
 resource "confluent_api_key" "connector_keys" {
     display_name = "connectors-api-key-${random_id.env_display_id.hex}"
-    description = "${local.confluent_description}"
+    description = "${var.confluent_description}"
     owner {
         id = confluent_service_account.connectors.id 
         api_version = confluent_service_account.connectors.api_version
